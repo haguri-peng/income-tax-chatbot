@@ -3,16 +3,21 @@ import streamlit as st
 from dotenv import load_dotenv
 from llm import get_ai_response, get_rag_chain
 
+# .env 파일 로드
 load_dotenv()
 
 st.set_page_config(page_title="소득세 챗봇", page_icon="🤖")
 
-# 앱 최초 실행 시 RAG 체인 미리 초기화 (캐싱 트리거)
-with st.spinner("소득세 챗봇 초기화 중입니다... (최초 1회만 걸려요 🤖)"):
-    get_rag_chain()  # 미리 호출해서 캐싱 트리거
+# # 앱 최초 실행 시 RAG 체인 미리 초기화 (캐싱 트리거)
+# with st.spinner("소득세 챗봇 초기화 중입니다... (최초 1회만 걸려요 🤖)"):
+#     get_rag_chain()  # 미리 호출해서 캐싱 트리거
 
 st.title("🤖 소득세 챗봇")
 st.caption("소득세에 관련된 모든것을 답해드립니다!")
+
+# 세션 상태로 초기화 여부 관리
+if 'rag_chain_initialized' not in st.session_state:
+    st.session_state.rag_chain_initialized = False
 
 # ========== 대화 ==========
 # 기존 대화 기록 유지
@@ -26,6 +31,12 @@ for message in st.session_state.message_list:
 
 # 사용자 입력
 if user_question := st.chat_input(placeholder="소득세에 관련된 궁금한 내용들을 말씀해주세요!"):
+    # 첫 질문일 때만 초기화
+    if not st.session_state.rag_chain_initialized:
+        with st.spinner("소득세 챗봇 초기화 중입니다... (최초 1회만 걸려요 🤖)"):
+            get_rag_chain()  # 여기서 초기화
+            st.session_state.rag_chain_initialized = True
+
     # 사용자 메시지 즉시 추가 및 표시
     st.session_state.message_list.append({"role": "user", "content": user_question})
     with st.chat_message("user"):
