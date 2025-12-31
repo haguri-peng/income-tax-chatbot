@@ -49,9 +49,9 @@ def get_retriever():
         print("[Initializer] Retriever 초기화 중...")
 
         # 임베딩 모델 로드
-        embedding = HuggingFaceEmbeddings(model_name="Qwen/Qwen3-Embedding-0.6B")
+        embedding = HuggingFaceEmbeddings(model_name="dragonkue/multilingual-e5-small-ko",)
 
-        index_name = "tax-markdown-index"
+        index_name = "tax-markdown-index-small"
         pinecone_api_key = os.getenv("PINECONE_API_KEY")
 
         # Pinecone 클라이언트 초기화 (인덱스에 직접 연결)
@@ -63,8 +63,8 @@ def get_retriever():
             index_name=index_name,
         )
 
-        # k=2 → 가장 유사한 2개 문서를 가져오도록 설정
-        _retriever = database.as_retriever(search_kwargs={"k": 2})
+        # k=3 → 가장 유사한 3개 문서를 가져오도록 설정
+        _retriever = database.as_retriever(search_kwargs={"k": 3})
 
         print("[Initializer] Retriever 초기화 완료")
     return _retriever
