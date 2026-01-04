@@ -1,6 +1,7 @@
-import os
-
 from operator import itemgetter  # 딕셔너리에서 특정 키 값을 추출할 때 사용 (람다 대신 깔끔하게)
+
+import os
+import streamlit as st
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, \
@@ -140,6 +141,7 @@ def format_docs_with_print(docs):
 # ------------------------------------------------------------
 # 6. 전체 RAG 체인 구성
 # ------------------------------------------------------------
+@st.cache_resource
 def get_rag_chain():
     global _rag_chain
     if _rag_chain is None:
